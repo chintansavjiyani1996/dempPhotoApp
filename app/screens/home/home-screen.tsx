@@ -1,14 +1,11 @@
 import React, { FC, useRef } from "react"
 import { observer } from "mobx-react-lite"
-import { ViewStyle, View, Platform, FlatList, Image, Dimensions,TouchableOpacity } from "react-native"
+import { ViewStyle, View, FlatList, Image, Dimensions,TouchableOpacity, ImageStyle } from "react-native"
 import { StackScreenProps } from "@react-navigation/stack"
 import { NavigatorParamList } from "../../navigators"
 import ActionSheet from 'react-native-actionsheet';
 import { Button, Screen, Text } from "../../components"
 import * as ImagePicker from 'expo-image-picker';
-
-// import { useNavigation } from "@react-navigation/native"
-// import { useStores } from "../../models"
 import { color } from "../../theme"
 import { RootStore, useStores } from "../../models"
 
@@ -18,6 +15,15 @@ const ROOT: ViewStyle = {
   backgroundColor: color.palette.black,
   flex: 1,
 }
+
+const RENDER_ITEM: ImageStyle = {
+  width: WINDOW.width / 3 - 2,
+  height: WINDOW.width / 3 - 2,
+    resizeMode: 'cover',
+}
+
+const RENDER_CATEGORY: ImageStyle = 
+{flexDirection:"row",flexWrap:"wrap"}
 
 // STOP! READ ME FIRST!
 // To fix the TS error below, you'll need to add the following things in your navigation config:
@@ -39,6 +45,7 @@ const GalleryPickerOptions: any = {
   aspect: [4, 3],
   quality: 1,
 };
+
 // REMOVE ME! ⬇️ This TS ignore will not be necessary after you've added the correct navigator param type
 // @ts-ignore
 export const HomeScreen: FC<StackScreenProps<NavigatorParamList, "home">> = observer(
@@ -57,12 +64,10 @@ export const HomeScreen: FC<StackScreenProps<NavigatorParamList, "home">> = obse
           }
         case 1:
           try {
-            // let result =  ImagePicker.launchCameraAsync(CameraPhotoOptions)
-            // if (!result.cancelled) {
+            let result:any =  ImagePicker.launchCameraAsync(CameraPhotoOptions)
+            if (!result.cancelled) {     
 
-            //   console.log("result",result.uri)
-
-            // }
+            }
 
           } catch (error) {
 
@@ -88,11 +93,7 @@ export const HomeScreen: FC<StackScreenProps<NavigatorParamList, "home">> = obse
     const renderPhotos = (({ item, index }) => {
       return (
         <Image
-          style={{
-            width: WINDOW.width / 3 - 2,
-            height: WINDOW.width / 3 - 2,
-            resizeMode: 'cover',
-          }}
+          style={RENDER_ITEM}
           resizeMode={'cover'}
           source={{ uri: 'file://' + item.uri }}
         />
@@ -102,7 +103,7 @@ export const HomeScreen: FC<StackScreenProps<NavigatorParamList, "home">> = obse
     const renderCategory = () => {
       const {photoStore}= rootStore
       return (
-        <View style={{ flexDirection:"row",flexWrap:"wrap"}}>
+        <View style={RENDER_CATEGORY}>
           {
             photoStore.category.map((value) => {
               return (
@@ -115,8 +116,6 @@ export const HomeScreen: FC<StackScreenProps<NavigatorParamList, "home">> = obse
         </View>
       )
     }
-
-    console.log("{rootStore.photoStore.photos",rootStore.photoStore.photos)
 
     // Pull in one of our MST stores
     // const { someStore, anotherStore } = useStores()
